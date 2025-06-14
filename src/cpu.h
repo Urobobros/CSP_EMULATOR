@@ -11,9 +11,11 @@ public:
     void reset();
     void run();
 private:
+    bool step();
     Memory &memory;
     Peripherals &peripherals;
-    uint32_t pc = 0;
+    uint16_t pc = 0;
+    uint8_t acc = 0;
 };
 
 #endif // CSP_EMULATOR_CPU_H

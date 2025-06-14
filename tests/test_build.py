@@ -17,17 +17,19 @@ def test_cmake_build():
     default_fw = os.path.join(ROOT, 'firmware', 'firmware.bin')
     os.makedirs(os.path.dirname(default_fw), exist_ok=True)
     with open(default_fw, 'wb') as f:
-        f.write(b'\x00\x01\x02\x03')
+        f.write(b'\x74\x05\x04\x22')
 
     out = subprocess.check_output([exe], cwd=ROOT).decode()
+    assert 'CPU halted with A=6' in out
     assert 'ADPCM processing stub' in out
 
     with tempfile.NamedTemporaryFile(delete=False) as tmp:
-        tmp.write(b'\x05\x06')
+        tmp.write(b'\x74\x02\x04\x22')
         tmp.flush()
         env = dict(os.environ)
         env['FIRMWARE_PATH'] = tmp.name
         out_env = subprocess.check_output([exe], env=env, cwd=ROOT).decode()
+    assert 'CPU halted with A=3' in out_env
     assert 'ADPCM processing stub' in out_env
 
     os.remove(default_fw)
